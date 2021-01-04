@@ -1905,7 +1905,7 @@ namespace Zenject
 
         public void MoveGameObjectToScene(GameObject obj)
         {
-            obj.transform.SetParent(container.ContextTransform);
+            obj.transform.SetParent(ContextTransform);
             obj.transform.SetParent(null);
         }
 #endif
