@@ -2016,51 +2016,45 @@ namespace Zenject
 
         // Note: For IL2CPP platforms make sure to use new object[] instead of new [] when creating
         // the argument list to avoid errors converting to IEnumerable<object>
-        public T InstantiateComponentOnNewGameObject<T>(
-            string gameObjectName, IEnumerable<object> extraArgs)
+        public T InstantiateComponentOnNewGameObject<T>(string gameObjectName, IEnumerable<object> extraArgs)
             where T : Component
         {
-            return InstantiateComponent<T>(
-                CreateEmptyGameObject(gameObjectName),
-                extraArgs);
+            return InstantiateComponent<T>(CreateEmptyGameObject(gameObjectName), extraArgs);
         }
 
         // Create a new game object from a prefab and fill in dependencies for all children
         public GameObject InstantiatePrefab(UnityEngine.Object prefab)
         {
-            return InstantiatePrefab(
-                prefab, GameObjectCreationParameters.Default);
+            return InstantiatePrefab(prefab, GameObjectCreationParameters.Default);
         }
 
         // Create a new game object from a prefab and fill in dependencies for all children
         public GameObject InstantiatePrefab(UnityEngine.Object prefab, Transform parentTransform)
         {
-            return InstantiatePrefab(
-                prefab, new GameObjectCreationParameters { ParentTransform = parentTransform });
+            return InstantiatePrefab(prefab, new GameObjectCreationParameters
+            {
+                ParentTransform = parentTransform
+            });
         }
 
         // Create a new game object from a prefab and fill in dependencies for all children
-        public GameObject InstantiatePrefab(
-            UnityEngine.Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform)
+        public GameObject InstantiatePrefab(UnityEngine.Object prefab, Vector3 position, Quaternion rotation, Transform parentTransform)
         {
-            return InstantiatePrefab(
-                prefab, new GameObjectCreationParameters
-                {
-                    ParentTransform = parentTransform,
-                    Position = position,
-                    Rotation = rotation
-                });
+            return InstantiatePrefab(prefab, new GameObjectCreationParameters
+            {
+                ParentTransform = parentTransform,
+                Position = position,
+                Rotation = rotation
+            });
         }
 
         // Create a new game object from a prefab and fill in dependencies for all children
-        public GameObject InstantiatePrefab(
-            UnityEngine.Object prefab, GameObjectCreationParameters gameObjectBindInfo)
+        public GameObject InstantiatePrefab(UnityEngine.Object prefab, GameObjectCreationParameters gameObjectBindInfo)
         {
             FlushBindings();
 
             bool shouldMakeActive;
-            var gameObj = CreateAndParentPrefab(
-                prefab, gameObjectBindInfo, null, out shouldMakeActive);
+            GameObject gameObj = CreateAndParentPrefab(prefab, gameObjectBindInfo, null, out shouldMakeActive);
 
             InjectGameObject(gameObj);
 
@@ -2101,7 +2095,7 @@ namespace Zenject
         }
         
         public T InstantiatePrefab<T>(T prefab, Vector3 position, Quaternion rotation) 
-            where T : UnityEngine.Object
+            where T : UnityEngine.Component
         {
             GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
             {
@@ -2113,7 +2107,7 @@ namespace Zenject
         }
         
         public T InstantiatePrefab<T>(T prefab, Vector3 position, Quaternion rotation, Transform parentTransform) 
-            where T : UnityEngine.Object
+            where T : UnityEngine.Component
         {
             GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
             {
@@ -2126,13 +2120,11 @@ namespace Zenject
         }
 
         public T InstantiatePrefab<T>(T prefab, Transform parentTransform)
-            where T : UnityEngine.Object
+            where T : UnityEngine.Component
         {
             GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
             {
-                ParentTransform = parentTransform,
-                Position = Vector3.zero,
-                Rotation = Quaternion.identity
+                ParentTransform = parentTransform
             });
 
             return obj.GetComponent<T>();
