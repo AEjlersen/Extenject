@@ -1,0 +1,1 @@
+Xcopy ..\..\zenject-Extenject\UnityProject\Assets\Plugins\Zenject ..\ /E/H/C/I
