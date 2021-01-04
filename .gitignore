@@ -18,3 +18,5 @@ project_root_marker
 
 # Added by Mathijs:
 .DS_Store
+UnityProject/Assets/Plugins/Zenject/Source/.idea
+AssemblyBuild/Zenject-usage/.idea/.idea.Zenject-usage/.idea
