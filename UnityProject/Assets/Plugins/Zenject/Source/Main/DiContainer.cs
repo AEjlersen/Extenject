@@ -2384,6 +2384,16 @@ namespace Zenject
                 ZenPools.DespawnList(monoBehaviours);
             }
         }
+        
+        public void InjectMonoBehaviours(GameObject obj)
+        {
+            MonoBehaviour[] behaviours = obj.GetComponentsInChildren<MonoBehaviour>(true);
+            
+            for (var i = 0; i < behaviours.Length; i++)
+            {
+                Inject(behaviours[i]);
+            }
+        }
 
         // Same as InjectGameObject except it will also search the game object for the
         // given component, and also optionally allow passing extra inject arguments into the
