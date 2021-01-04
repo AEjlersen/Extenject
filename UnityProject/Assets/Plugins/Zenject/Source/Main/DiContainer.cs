@@ -5,6 +5,7 @@ using System.Linq;
 using ModestTree;
 using ModestTree.Util;
 using Zenject.Internal;
+
 #if !NOT_UNITY3D
 using UnityEngine;
 #endif
@@ -225,7 +226,7 @@ namespace Zenject
 
 #if !NOT_UNITY3D
         // This might be null in some rare cases like when used in ZenjectUnitTestFixture
-        Transform ContextTransform
+        internal Transform ContextTransform
         {
             get
             {
@@ -1812,6 +1813,21 @@ namespace Zenject
 
             return gameObj;
         }
+        
+        public GameObject CreateEmptyGameObject(string name, params System.Type[] types)
+        {
+            GameObject obj = CreateEmptyGameObject(new GameObjectCreationParameters { Name = name }, null);
+
+            if (types != null)
+            {
+                for (var i = 0; i < types.Length; i++)
+                {
+                    obj.AddComponent(types[i]);
+                }
+            }
+            
+            return obj;
+        }
 
         Transform GetTransformGroup(
             GameObjectCreationParameters gameObjectBindInfo, InjectContext context)
@@ -1887,6 +1903,11 @@ namespace Zenject
             return gameObj;
         }
 
+        public void MoveGameObjectToScene(GameObject obj)
+        {
+            obj.transform.SetParent(container.ContextTransform);
+            obj.transform.SetParent(null);
+        }
 #endif
 
         // Use this method to create any non-monobehaviour
@@ -2054,6 +2075,67 @@ namespace Zenject
             }
 
             return gameObj;
+        }
+        
+        public GameObject InstantiatePrefab(GameObject prefab, Vector3 position, Quaternion rotation)
+        {
+            GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
+            {
+                Position = position,
+                Rotation = rotation
+            });
+
+            return obj;
+        }
+        
+        public GameObject InstantiatePrefab(GameObject prefab, Vector3 position, Quaternion rotation, Transform parentTransform)
+        {
+            GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
+            {
+                ParentTransform = parentTransform,
+                Position = position,
+                Rotation = rotation
+            });
+
+            return obj;
+        }
+        
+        public T InstantiatePrefab<T>(T prefab, Vector3 position, Quaternion rotation) 
+            where T : UnityEngine.Object
+        {
+            GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
+            {
+                Position = position,
+                Rotation = rotation
+            });
+
+            return obj.GetComponent<T>();
+        }
+        
+        public T InstantiatePrefab<T>(T prefab, Vector3 position, Quaternion rotation, Transform parentTransform) 
+            where T : UnityEngine.Object
+        {
+            GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
+            {
+                ParentTransform = parentTransform,
+                Position = position,
+                Rotation = rotation
+            });
+
+            return obj.GetComponent<T>();
+        }
+
+        public T InstantiatePrefab<T>(T prefab, Transform parentTransform)
+            where T : UnityEngine.Object
+        {
+            GameObject obj = InstantiatePrefab(prefab, new GameObjectCreationParameters
+            {
+                ParentTransform = parentTransform,
+                Position = Vector3.zero,
+                Rotation = Quaternion.identity
+            });
+
+            return obj.GetComponent<T>();
         }
 
         // Create a new game object from a resource path and fill in dependencies for all children
