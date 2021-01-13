@@ -45,6 +45,7 @@ namespace Zenject.Tests.Signals
 
             Container.ResolveRoots();
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
 
             Container.Inject(this);
 
@@ -80,6 +81,7 @@ namespace Zenject.Tests.Signals
 
             Container.ResolveRoots();
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
 
             Container.Inject(this);
 

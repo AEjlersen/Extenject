@@ -1,17 +1,14 @@
-using System;
-using ModestTree;
 using UnityEngine;
 using UnityEditor;
-using Zenject;
 
 namespace Zenject.MemoryPoolMonitor
 {
     public class MpmWindow : ZenjectEditorWindow
     {
-        [MenuItem("Window/Zenject Pool Monitor")]
+        [MenuItem("Window/Zenject/Pool Monitor")]
         public static MpmWindow GetOrCreateWindow()
         {
-            var window = EditorWindow.GetWindow<MpmWindow>();
+            var window = GetWindow<MpmWindow>();
             window.titleContent = new GUIContent("Pool Monitor");
             return window;
         }

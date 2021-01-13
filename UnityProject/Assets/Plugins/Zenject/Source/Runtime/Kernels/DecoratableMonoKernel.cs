@@ -28,6 +28,7 @@
         public virtual void Initialize()
         {
             InitializableManager.Initialize();
+            InitializableManager.LateInitialize();
         }
 
         public void Update()

@@ -167,6 +167,7 @@ namespace Zenject.Tests.Signals
             Container.DeclareSignal<FooSignal>().RunAsync();
             Container.ResolveRoots();
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
 
             var signalBus = Container.Resolve<SignalBus>();
 
@@ -206,6 +207,7 @@ namespace Zenject.Tests.Signals
             Container.DeclareSignal<FooSignal>().RunAsync();
             Container.ResolveRoots();
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
 
             var signalBus = Container.Resolve<SignalBus>();
 

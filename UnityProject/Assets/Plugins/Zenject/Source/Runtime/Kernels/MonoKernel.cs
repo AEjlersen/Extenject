@@ -52,6 +52,7 @@ namespace Zenject
                 else
                 {
                     _initializableManager.Initialize();
+                    _initializableManager.LateInitialize();
                 }
             }
         }

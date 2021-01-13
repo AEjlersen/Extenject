@@ -18,6 +18,7 @@ namespace Zenject
         public virtual void Initialize()
         {
             _initializableManager.Initialize();
+            _initializableManager.LateInitialize();
         }
 
         public virtual void Dispose()

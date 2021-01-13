@@ -35,6 +35,7 @@ namespace Zenject.Tests.Other
             Assert.That(!DisposeTest.WasRun);
 
             initManager.Initialize();
+            initManager.LateInitialize();
             tickManager.Update();
             disposeManager.Dispose();
 

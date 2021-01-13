@@ -63,6 +63,7 @@ namespace Zenject.Tests.Bindings
 
             Assert.That(!facade.Foo.WasInitialized);
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
             Assert.That(facade.Foo.WasInitialized);
         }
 
@@ -79,6 +80,7 @@ namespace Zenject.Tests.Bindings
 
             Assert.That(!facade.Foo.WasInitialized);
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
             Assert.That(facade.Foo.WasInitialized);
         }
 
@@ -115,6 +117,7 @@ namespace Zenject.Tests.Bindings
 
             Assert.That(!facade.Foo.WasInitialized);
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
             Assert.That(facade.Foo.WasInitialized);
 
             Assert.IsEqual(Container.Resolve<Bar>().InitializeCount, 1);
@@ -139,6 +142,7 @@ namespace Zenject.Tests.Bindings
 
             Assert.That(!facade.Foo.WasInitialized);
             Container.Resolve<InitializableManager>().Initialize();
+            Container.Resolve<InitializableManager>().LateInitialize();
             Assert.That(facade.Foo.WasInitialized);
 
             Assert.IsEqual(Container.Resolve<Bar>().InitializeCount, 2);

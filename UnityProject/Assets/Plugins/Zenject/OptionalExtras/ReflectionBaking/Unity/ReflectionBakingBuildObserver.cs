@@ -1,12 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using ModestTree;
 using UnityEditor;
 using UnityEditor.Compilation;
-using UnityEngine;
 using Zenject.ReflectionBaking.Mono.Cecil;
+using Assembly = System.Reflection.Assembly;
 using Debug = UnityEngine.Debug;
 
 namespace Zenject.ReflectionBaking
@@ -21,57 +22,38 @@ namespace Zenject.ReflectionBaking
 
         static void OnAssemblyCompiled(string assemblyAssetPath, CompilerMessage[] messages)
         {
-#if !UNITY_2018_1_OR_NEWER
+            #if !UNITY_2018_1_OR_NEWER
             if (Application.isEditor && !BuildPipeline.isBuildingPlayer)
-            {
                 return;
-            }
-#endif
+            #endif
 
-            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.WSAPlayer)
-            {
-                Log.Warn("Zenject reflection baking skipped because it is not currently supported on WSA platform!");
-            }
-            else
-            {
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WSAPlayer)
                 TryWeaveAssembly(assemblyAssetPath);
-            }
         }
 
-        static void TryWeaveAssembly(string assemblyAssetPath)
+        private static void TryWeaveAssembly(string assemblyAssetPath)
         {
-            var settings = ReflectionBakingInternalUtil.TryGetEnabledSettingsInstance();
+            ZenjectReflectionBakingSettings settings = ReflectionBakingInternalUtil.TryGetEnabledSettingsInstance();
 
             if (settings == null)
-            {
                 return;
-            }
-
             if (settings.AllGeneratedAssemblies && settings.ExcludeAssemblies.Contains(assemblyAssetPath))
-            {
                 return;
-            }
-
             if (!settings.AllGeneratedAssemblies && !settings.IncludeAssemblies.Contains(assemblyAssetPath))
-            {
                 return;
-            }
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var assemblyFullPath = ReflectionBakingInternalUtil.ConvertAssetPathToSystemPath(assemblyAssetPath);
+            string assemblyFullPath = ReflectionBakingInternalUtil.ConvertAssetPathToSystemPath(assemblyAssetPath);
 
             var readerParameters = new ReaderParameters
             {
                 AssemblyResolver = new UnityAssemblyResolver(),
-                // Is this necessary?
-                //ReadSymbols = true,
             };
 
-            var module = ModuleDefinition.ReadModule(assemblyFullPath, readerParameters);
-
-            var assemblyRefNames = module.AssemblyReferences.Select(x => x.Name.ToLower()).ToList();
+            ModuleDefinition module = ModuleDefinition.ReadModule(assemblyFullPath, readerParameters);
+            List<string> assemblyRefNames = module.AssemblyReferences.Select(x => x.Name.ToLower()).ToList();
 
             if (!assemblyRefNames.Contains("zenject-usage"))
             {
@@ -80,9 +62,10 @@ namespace Zenject.ReflectionBaking
                 return;
             }
 
-            var assemblyName = Path.GetFileNameWithoutExtension(assemblyAssetPath);
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => x.GetName().Name == assemblyName).OnlyOrDefault();
+            string assemblyName = Path.GetFileNameWithoutExtension(assemblyAssetPath);
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
+                                         .Where(x => x.GetName().Name == assemblyName)
+                                         .OnlyOrDefault();
 
             Assert.IsNotNull(assembly, "Could not find unique assembly '{0}' in currently loaded list of assemblies", assemblyName);
 
@@ -91,12 +74,7 @@ namespace Zenject.ReflectionBaking
 
             if (numTypesChanged > 0)
             {
-                var writerParams = new WriterParameters()
-                {
-                    // Is this necessary?
-                    //WriteSymbols = true
-                };
-
+                var writerParams = new WriterParameters();
                 module.Write(assemblyFullPath, writerParams);
 
                 Debug.Log("Added reflection baking to '{0}' types in assembly '{1}', took {2:0.00} seconds"
