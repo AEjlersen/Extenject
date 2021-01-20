@@ -45,6 +45,10 @@ namespace Zenject
 				else _localDeclarationMap[x.BindingId].Subscriptions.AllocFreeAddRange(x.Subscriptions);
 			});
             _parentBus = parentBus;
+            
+            #if UNITY_EDITOR
+            StaticSignalBusRegistry.Add(this);
+            #endif
         }
 
         public SignalBus ParentBus
@@ -98,6 +102,10 @@ namespace Zenject
             {
                 declaration.Dispose();
             }
+            
+            #if UNITY_EDITOR
+            StaticSignalBusRegistry.Remove(this);
+            #endif
         }
 
         public void FireId<TSignal>(object identifier, TSignal signal)

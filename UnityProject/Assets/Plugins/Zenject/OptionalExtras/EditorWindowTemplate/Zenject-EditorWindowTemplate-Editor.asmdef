@@ -1,9 +1,8 @@
 {
-    "name": "Zenject-PoolMonitor-Editor",
+    "name": "Zenject-EditorWindowTemplate-Editor",
     "references": [
         "Zenject",
-        "Zenject-Editor",
-        "Zenject-EditorWindowTemplate-Editor"
+        "Zenject-Editor"
     ],
     "includePlatforms": [
         "Editor"
@@ -12,7 +11,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
+    "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
