@@ -15,9 +15,9 @@ namespace Zenject
 {
     public abstract class SceneTestFixture
     {
+        public bool IsScenesLoaded { get; private set; }
+        
         readonly List<DiContainer> _sceneContainers = new List<DiContainer>();
-
-        bool _hasLoadedScene;
         DiContainer _sceneContainer;
 
         protected DiContainer SceneContainer
@@ -37,14 +37,26 @@ namespace Zenject
 
         public IEnumerator LoadScenes(params string[] sceneNames)
         {
-            Assert.That(!_hasLoadedScene, "Attempted to load scene twice!");
-            _hasLoadedScene = true;
+            Assert.That(!IsScenesLoaded, "Attempted to load scene twice!");
+            IsScenesLoaded = true;
 
             // Clean up any leftovers from previous test
             ZenjectTestUtil.DestroyEverythingExceptTestRunner(false);
-
             Assert.That(SceneContainers.IsEmpty());
+            bool loadScenes = true;
 
+            for (var i = 0; i < sceneNames.Length; i++)
+            {
+                bool isLoadable = Application.CanStreamedLevelBeLoaded(sceneNames[i]);
+                Assert.Warn(isLoadable, $"Missing {sceneNames[i]} from build settings. Won't load scenes.");
+                
+                if (!isLoadable)
+                    loadScenes = false;
+            }
+
+            if (!loadScenes)
+                yield break;
+            
             for (int i = 0; i < sceneNames.Length; i++)
             {
                 var sceneName = sceneNames[i];
@@ -93,7 +105,7 @@ namespace Zenject
 
         void SetMemberDefaults()
         {
-            _hasLoadedScene = false;
+            IsScenesLoaded = false;
             _sceneContainer = null;
             _sceneContainers.Clear();
         }

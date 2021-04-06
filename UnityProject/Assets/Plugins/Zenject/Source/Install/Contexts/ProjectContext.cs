@@ -16,6 +16,7 @@ namespace Zenject
         public static event Action PreResolve;
         public static event Action PostResolve;
 
+        public static bool IsResourceLoadEnabled = true;
         public const string ProjectContextResourcePath = "ProjectContext";
         public const string ProjectContextResourcePathOld = "ProjectCompositionRoot";
 
@@ -104,8 +105,7 @@ namespace Zenject
             Assert.That(FindObjectsOfType<ProjectContext>().IsEmpty(),
                 "Tried to create multiple instances of ProjectContext!");
 
-            var prefab = TryGetPrefab();
-
+            var prefab = IsResourceLoadEnabled ? TryGetPrefab() : null;
             var prefabWasActive = false;
 
 #if ZEN_INTERNAL_PROFILING

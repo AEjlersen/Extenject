@@ -12,10 +12,10 @@ namespace Zenject
 {
     public abstract class ZenjectIntegrationTestFixture
     {
-        SceneContext _sceneContext;
-
-        bool _hasEndedInstall;
-        bool _hasStartedInstall;
+        protected bool loadProjectContextFromResources;
+        private SceneContext _sceneContext;
+        private bool _hasEndedInstall;
+        private bool _hasStartedInstall;
 
         protected DiContainer Container
         {
@@ -65,11 +65,11 @@ namespace Zenject
 
             Assert.That(_sceneContext == null);
 
+            ProjectContext.IsResourceLoadEnabled = loadProjectContextFromResources;
             _sceneContext = SceneContext.Create();
             _sceneContext.Install();
 
             Assert.That(ProjectContext.HasInstance);
-
             Assert.IsEqual(shouldValidate, ProjectContext.Instance.Container.IsValidating);
             Assert.IsEqual(shouldValidate, _sceneContext.Container.IsValidating);
         }
@@ -130,6 +130,7 @@ namespace Zenject
                 _sceneContext = null;
             }
 
+            ProjectContext.IsResourceLoadEnabled = true;
             ZenjectTestUtil.DestroyEverythingExceptTestRunner(immediate);
             StaticContext.Clear();
         }
